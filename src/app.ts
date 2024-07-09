@@ -1,6 +1,13 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import userRoutes from "./user/routes";
+import localGovernmentRoutes from "./localGovernment/routes";
+import townRoutes from "./town/routes";
+import schoolRoutes from "./school/routes";
+import studentRoutes from "./student/routes";
+import teacherRoutes from "./teacher/routes";
+import resultRoutes from "./result/routes";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 
@@ -46,10 +53,16 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res
-    .status(200)
-    .json({ message: "Welecome to BudgetEase Backend API Service" });
+  res.status(200).json({ message: "Welecome to Kano DBMS API Service" });
 });
+
+app.use("/user", userRoutes);
+app.use("/lg", localGovernmentRoutes);
+app.use("/town", townRoutes);
+app.use("/school", schoolRoutes);
+app.use("/student", studentRoutes);
+app.use("/teacher", teacherRoutes);
+app.use("/result", resultRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`server ready and listening on port:${process.env.PORT}`);

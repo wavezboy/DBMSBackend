@@ -14,6 +14,8 @@ model User {
   imageId String
   email    String   @unique
   password String
+  firstName String
+  lastName String
   role     Role
 }
 
@@ -42,7 +44,7 @@ model Town {
 
 // Table for storing information about schools within each town
 model School {
-  id                String  @id
+  id                String  @id @default(cuid())
   specialId         String  @unique
   name              String
   address           String
@@ -51,13 +53,14 @@ model School {
   localGovernment   LocalGovernment @relation(fields: [localGovernmentId], references: [id])
   town              Town            @relation(fields: [townId], references: [id])
   teachers          Teacher[]
+  students          Student[]
 }
 
 
 
 // Table for storing information about students
 model Student {
-  id             String    @id
+   id                String  @id @default(cuid())
   studentId      String    @unique
   firstName      String
   lastName       String
@@ -66,14 +69,16 @@ model Student {
   addresses       String[]
   dateOfBirth    DateTime
   gender         String
+  schoolId       String
   class        String
   previousClasses String[]
   results        Result[]
+  school              School            @relation(fields: [schoolId], references: [id])
 }
 
 // Table for storing information about teachers
 model Teacher {
-  id            String   @id
+   id                String  @id @default(cuid())
   teacherId     String   @unique
   firstName     String
   lastName      String
@@ -85,19 +90,16 @@ model Teacher {
   pastSchools   Json
   isPrincipal   Boolean
   isHeadmaster Boolean[]
-  results       Result[]
 }
 
 // Table for storing the results of students for each term
 model Result {
-  id        String   @id @default(cuid())
+  id          String  @id @default(cuid())
   studentName String
-  studentId String
-  teacherId String
-  class        String
-  term      String
-  year      Int
-  details   Json
-  student   Student  @relation(fields: [studentId], references: [id])
-  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  studentId   String
+  class       String
+  term        String
+  year        Int
+  details     Json
+  student     Student @relation(fields: [studentId], references: [id])
 }

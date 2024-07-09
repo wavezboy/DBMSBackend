@@ -5,6 +5,22 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+
+  
+}
+
+model User {
+  id       String   @id @default(uuid())
+  imageId String
+  email    String   @unique
+  password String
+  role     Role
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
 }
 
 // Table for storing information about local governments
@@ -34,21 +50,10 @@ model School {
   townId            String
   localGovernment   LocalGovernment @relation(fields: [localGovernmentId], references: [id])
   town              Town            @relation(fields: [townId], references: [id])
-  classes           Class[]
   teachers          Teacher[]
 }
 
-// Table for storing information about classes within each school
-model Class {
-  id        String   @id @default(cuid())
-  name      String
-  yearActive String
-  schoolId  String
-  school    School    @relation(fields: [schoolId], references: [id])
-  studentIds String[]
-  students  Student[]
-  ResultOfstudents Result[]
-}
+
 
 // Table for storing information about students
 model Student {
@@ -56,12 +61,12 @@ model Student {
   studentId      String    @unique
   firstName      String
   lastName       String
+  imageId        String
   parentsOrGuidians Json
   addresses       String[]
   dateOfBirth    DateTime
   gender         String
-  classId        String
-  class          Class     @relation(fields: [classId], references: [id])
+  class        String
   previousClasses String[]
   results        Result[]
 }
@@ -72,6 +77,7 @@ model Teacher {
   teacherId     String   @unique
   firstName     String
   lastName      String
+  imageId       String
   currentSchoolId String
   addresses String[]
   currentSchool School   @relation(fields: [currentSchoolId], references: [id])
@@ -88,8 +94,7 @@ model Result {
   studentName String
   studentId String
   teacherId String
-  classId        String
-  class          Class     @relation(fields: [classId], references: [id])
+  class        String
   term      String
   year      Int
   details   Json

@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import userRoutes from "./User/userRoutes";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 
@@ -51,8 +50,6 @@ app.get("/", (req, res) => {
     .status(200)
     .json({ message: "Welecome to BudgetEase Backend API Service" });
 });
-
-app.use("/user", userRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`server ready and listening on port:${process.env.PORT}`);

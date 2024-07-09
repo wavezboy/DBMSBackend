@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Table for storing information about local governments
+model LocalGovernment {
+  id    String @id @default(cuid())
+  name  String
+  towns Town[]
+  schools School[]
+}
+
+// Table for storing information about towns within each local government
+model Town {
+  id                String  @id @default(cuid())
+  name              String
+  localGovernmentId String
+  localGovernment   LocalGovernment @relation(fields: [localGovernmentId], references: [id])
+  schools           School[]
+}
+
+// Table for storing information about schools within each town
+model School {
+  id                String  @id
+  specialId         String  @unique
+  name              String
+  address           String
+  localGovernmentId String
+  townId            String
+  localGovernment   LocalGovernment @relation(fields: [localGovernmentId], references: [id])
+  town              Town            @relation(fields: [townId], references: [id])
+  classes           Class[]
+  teachers          Teacher[]
+}
+
+// Table for storing information about classes within each school
+model Class {
+  id        String   @id @default(cuid())
+  name      String
+  yearActive String
+  schoolId  String
+  school    School    @relation(fields: [schoolId], references: [id])
+  studentIds String[]
+  students  Student[]
+  ResultOfstudents Result[]
+}
+
+// Table for storing information about students
+model Student {
+  id             String    @id
+  studentId      String    @unique
+  firstName      String
+  lastName       String
+  parentsOrGuidians Json
+  addresses       String[]
+  dateOfBirth    DateTime
+  gender         String
+  classId        String
+  class          Class     @relation(fields: [classId], references: [id])
+  previousClasses String[]
+  results        Result[]
+}
+
+// Table for storing information about teachers
+model Teacher {
+  id            String   @id
+  teacherId     String   @unique
+  firstName     String
+  lastName      String
+  currentSchoolId String
+  addresses String[]
+  currentSchool School   @relation(fields: [currentSchoolId], references: [id])
+  isActive      Boolean
+  pastSchools   Json
+  isPrincipal   Boolean
+  isHeadmaster Boolean[]
+  results       Result[]
+}
+
+// Table for storing the results of students for each term
+model Result {
+  id        String   @id @default(cuid())
+  studentName String
+  studentId String
+  teacherId String
+  classId        String
+  class          Class     @relation(fields: [classId], references: [id])
+  term      String
+  year      Int
+  details   Json
+  student   Student  @relation(fields: [studentId], references: [id])
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+}
